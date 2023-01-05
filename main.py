@@ -1,29 +1,43 @@
-import csv
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
-# if Firefox:
-"""
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary #this module makes sure the gecko driver is added to the path before execution
-#"""
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import *
+from selenium.webdriver.common.action_chains import ActionChains
 
-#if Edge:
-#"""
-from selenium.webdriver.edge.service import Service
-from selenium.webdriver.edge.options import Options
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
-#"""
+import os
+import time
 
-#CREDENTIALS AND CONSTANTS
-UNAME = input("Email: ")
-PWORD = input("placeholder_p: ")
 
-#Waits
-def document_initialized(driver):
-    """Waiting for the doc to be ready"""
-    return driver.execute_script("return document.readyState")
 
+class Bot():
+    def __init__(self):
+        self.UNAME = input("Email: ")
+        self.PWORD = input("placeholder_p: ")
+        
+    def fetch_tp(self):
+        options = webdriver.ChromeOptions()
+        with webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options) as driver:
+            wait = WebDriverWait(driver, timeout=10, poll_frequency=1, ignored_exceptions=[ElementNotVisibleException,ElementNotSelectableException,NoSuchElementException])
+            driver.get('https://manage.tenantpay.com/login')
+            uname_field = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.txtEmail>input')))
+            uname_field.send_keys(self.UNAME)
+            time.sleep(5)
+            pwd_field = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, '.txtPassword>input')))
+            pwd_field.send_keys(self.PWORD)
+            time.sleep(5)
+            #input_field.send_keys(Keys.ENTER)
+
+
+    #Waits
+    def document_initialized(driver):
+        """Waiting for the doc to be ready"""
+        return driver.find_element()
+
+'''
 def login_wait(driver):
     """Waiting for the bot to be logged in"""
     
@@ -32,7 +46,7 @@ def login_wait(driver):
     if "CA$0.00" not in box_string:
         return True
     return False
-    
+
 def toggle_menu(driver):
     pages = driver.find_element(By.ID, "ag-2009-of-page-number")
     return pages
@@ -40,15 +54,8 @@ def toggle_menu(driver):
 
 #Common Code
 options = Options()
-options.add_experimental_option("detach", True)
-#if Edge:
-# """
-driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()), options=options)
-#"""
-#if Firefox:
-"""
-binary = FirefoxBinary('C:\Firefox\Firefox.exe')
-driver = webdriver.Firefox(firefox_binary=binary)
+driver = webdriver.Chrome()
+
 #"""
 driver.get("https://manage.tenantpay.com/login")
 WebDriverWait(driver, timeout=10).until(document_initialized)
@@ -71,3 +78,7 @@ print(a.text)
 #download_button = driver.find_element(By.CSS_SELECTOR, "ion-button.md.button.button-solid.ion-activatable")
 #print(download_button)
 #download_button.click()
+'''
+if __name__=="__main__":
+    bot = Bot()
+    bot.fetch_tp()
